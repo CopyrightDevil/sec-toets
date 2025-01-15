@@ -2,37 +2,37 @@
 require "db.php";
 
 class Product {
-    private $pdo;
+    private $db;
 
-    public function __construct() {
-        $this->pdo = new DB();
+    public function __construct(DB $db) {
+        $this->db = $db;
     }
-    public function addProduct($name, $description, $price, $productcode, $categoryId) 
-    {
-        $this->pdo->run(
-            "INSERT INTO product (name, description, price, productcode, category_id) VALUES 
-                ('$name', '$description', $price, '$productcode', $categoryId)"
+
+    public function addProduct($name, $description, $price, $productCode, $categoryId) {
+        $this->db->run(
+            "INSERT INTO product (name, description, price, productCode, category_id) 
+            VALUES (?, ?, ?, ?, ?)",
+            [$name, $description, $price, $productCode, $categoryId]
         );
     }
-    public function getProduct($productId) {
-        return $this->pdo->run("SELECT * FROM product WHERE id = $productId")->fetch();
-    }
+
     public function getProducts() {
-        return $this->pdo->run("SELECT * FROM product")->fetchAll();
+        return $this->db->run("SELECT * FROM product")->fetchAll();
     }
-    public function getCategory() {
-        return $this->pdo->run("SELECT * FROM category")->fetchAll();
+
+    public function getProduct($id) {
+        return $this->db->run("SELECT * FROM product WHERE id = ?", [$id])->fetch();
     }
-    public function editProduct($id, $name, $description, $price, $productCode) {
-        $this->pdo->run(
-            "UPDATE product SET name = '$name', 
-            description = '$description', 
-            price = $price,
-            productCode = '$productCode'         
-            WHERE id = $id"
+
+    public function updateProduct($id, $name, $description, $price, $productCode) {
+        $this->db->run(
+            "UPDATE product SET name = ?, description = ?, price = ?, productCode = ? WHERE id = ?",
+            [$name, $description, $price, $productCode, $id]
         );
     }
-    public function deleteProduct($productCode) {
-        $this->pdo->run("DELETE FROM product WHERE productCode = '$productCode'");
+
+    public function deleteProduct($id) {
+        $this->db->run("DELETE FROM product WHERE id = ?", [$id]);
     }
 }
+?>

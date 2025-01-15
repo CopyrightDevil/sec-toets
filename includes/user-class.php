@@ -2,18 +2,22 @@
 require "db.php";
 
 class User {
-    private $pdo;
+    private $db;
 
-    public function __construct() {
-        $this->pdo = new DB();
+    public function __construct(DB $db) {
+        $this->db = $db;
     }
-    public function registerUser(String $name, String $email, String $password) {
-        $hash = md5($password);
-        $this->pdo->run(
-            "INSERT INTO user (name, email, password) VALUES ('$name', '$email', '$hash')"
-        );        
+
+    public function registerUser(string $name, string $email, string $password, string $role = 'user') {
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $this->db->run(
+            "INSERT INTO user (name, email, password, role) VALUES (?, ?, ?, ?)",
+            [$name, $email, $hash, $role]
+        );
     }
-    public function loginUser($email) {
-        return $this->pdo->run("SELECT * FROM user WHERE email = '$email'")->fetch();
+
+    public function loginUser(string $email) {
+        return $this->db->run("SELECT * FROM user WHERE email = ?", [$email])->fetch();
     }
 }
+?>

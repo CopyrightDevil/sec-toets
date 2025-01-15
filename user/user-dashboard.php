@@ -1,25 +1,29 @@
+<?php
+session_start();
+if ($_SESSION['login_status'] !== true) {
+    header("Location: ../index.php");
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title>Document</title>
+    <title>Dashboard</title>
 </head>
 <body>
+    <h1>Welkom, <?= htmlspecialchars($_SESSION['name']) ?>!</h1>
 
-<?php
-    session_start();
-    if ($_SESSION['login_status'] != true) {
-        header("Location: ../index.php");
-        die();
-    }
-    echo "Welkom ". $_SESSION['name']. "! U bent ingelogd.";
-    echo "<br><br>";
-    echo "<a class='btn btn-info' href='../product/product-add.php'>Producten pagina</a>";
-    echo "<br><br>";
-    echo "<a class='btn btn-danger' href='user-logout.php'>Logout</a>";
-?>
+    <!-- Iedereen mag producten bekijken -->
+    <a href="../product/product-view.php">Producten bekijken</a>
+
+    <!-- Alleen admins mogen producten beheren -->
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a href="../product/product-add.php">Producten beheren</a>
+    <?php endif; ?>
+
+    <a href="user-logout.php">Uitloggen</a>
 </body>
 </html>
